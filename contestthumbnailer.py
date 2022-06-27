@@ -316,7 +316,7 @@ def _createHtmlMarkupFromParsedComments(parsedComments: list) -> str:
     return bodyTemplate.replace('{images}', images)
 
 
-def _saveMarkdownToDisk(markdown: str, saveAsHTMLFile: bool) -> bool:
+def _saveMarkdownToDisk(markdown: str, saveAsHTMLFile: bool, specificName = None) -> bool:
     """
     Saves a generated markdown to disk.
 
@@ -328,7 +328,7 @@ def _saveMarkdownToDisk(markdown: str, saveAsHTMLFile: bool) -> bool:
     extension = '.html' if saveAsHTMLFile else 'md'
     nowDate = datetime.datetime.now()
 
-    textFile = open(nowDate.strftime("%m-%d-%Y-%H-%M") + '-GeneratedImageSheet' + extension, "w")
+    textFile = open(specificName if specificName != None else nowDate.strftime("%m-%d-%Y-%H-%M") + '-GeneratedImageSheet' + extension, "w")
     if not textFile:
         return False
     textFile.write(markdown)
@@ -382,7 +382,7 @@ def main(args: dict) -> int:
             return 1
 
         print('Saving markdown to disk...')
-        if not _saveMarkdownToDisk(markdown, args['html']):
+        if not _saveMarkdownToDisk(markdown, args['html'], args['filename']):
             print('Error. Couldn\'t save markdown.')
             return 1
 
@@ -427,6 +427,13 @@ if __name__ == '__main__':
         type=int,
         help='Width of a thumbnail in a thumbnail poster. Syntax: \'contestthumbnailer.py -img 1 -thumbwidth 160 -a "@user/permlink"\'.',
         default=MAX_THUMBNAIL_WIDTH_IN_IMAGE,
+        required=False
+    )
+    parser.add_argument(
+        '-filename',
+        type=str,
+        help='Specific filename for the output (Overrides default(generated names)).',
+        default=None,
         required=False
     )
     exit(
