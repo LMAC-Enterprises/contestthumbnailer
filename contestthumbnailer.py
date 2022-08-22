@@ -41,94 +41,8 @@ THUMBNAIL_LABEL_COLOR = (255, 255, 255)
 THUMBNAIL_POSTER_COLOR = (0, 0, 0, 0)
 IGNORE_DEFAULT_IMAGES_IN_POSTER = True
 
-AUTHOR_BLACKLIST = ['abdt',
-'abiproud',
-'adebayo22',
-'airscam00',
-'aliframadhan',
-'aniascs',
-'anne0208',
-'aris-indonesia',
-'artrage',
-'assegai',
-'ayahdindin',
-'belovedave',
-'boeh-u-leuping',
-'bulukat2seung',
-'captain70',
-'chipino',
-'daniella619',
-'danladi',
-'deep.crypto',
-'dreamchasers',
-'dwixer',
-'ellenklech',
-'emerline',
-'ferart01',
-'fibre1',
-'filipz',
-'findoutmark',
-'fudin-jfr',
-'fundin-jfr',
-'gabriella3594',
-'getovertools',
-'ghinamidrara',
-'giftjames',
-'gomessteem',
-'hafis',
-'hardiericsson',
-'herman-sbd',
-'holy.moly',
-'iamdenny',
-'icon-bassey',
-'jhokenecty',
-'kadyrova',
-'kalkulus001',
-'kamariah',
-'kater001',
-'khantika',
-'kingobonnaya',
-'lamboe',
-'lexi01',
-'lilpen',
-'loco88',
-'mawalampoehbujok',
-'mcaspectacular',
-'mcluz',
-'mizuno35',
-'mnzie01',
-'mochi3',
-'morenxo',
-'nabilswap',
-'nekbungoeng',
-'nellysteem',
-'nodzz',
-'nurudeen081',
-'oan-iata',
-'olenaginal',
-'ontarget0',
-'owleeya',
-'peazy001',
-'pictz',
-'poundrickshaw',
-'princedave12',
-'quimby-art',
-'raquel19',
-'realmaya',
-'sintiana',
-'starksteem',
-'steps100',
-'tailah.bayu1',
-'technoart',
-'techy22',
-'tember',
-'twenty4',
-'v0lga',
-'vareya',
-'weenyqueen',
-'weirdartist',
-'whizchick',
-]
+AUTHOR_BLACKLIST = ["abdt","abiproud","adebayo22","airscam00","aliframadhan","aniascs","anne0208","aris-indonesia","artrage","assegai","ayahdindin","belovedave","boeh-u-leuping","bulukat2seung","camila-jhon","captain70","chipino","daniella619","danladi","deep.crypto","dreamchasers","dwixer","ellenklech","emerline","ferart01","fibre1","filipz","findoutmark","fudin-jfr","fundin-jfr","gabriella3594","getovertools","ghinamidrara","giftjames","gomessteem","hafis","hardiericsson","herman-sbd","holy.moly","iamdenny","icon-bassey","jhokenecty","kadyrova","kalkulus001","kamariah","kater001","khantika","kingobonnaya","lamboe","lexi01","lilpen","loco88","mawalampoehbujok","mcaspectacular","mcluz","mizuno35","mnzie01","mochi3","morenxo","nabilswap","nekbungoeng","nellysteem","nodzz","nurudeen081","oan-iata","oliver-liam","olenaginal","ontarget0","owleeya","peazy001","pictz","poundrickshaw","princedave12","quimby-art","raquel19","realmaya","sintiana","starksteem","steps100","tailah.bayu1","technoart","techy22","tember","twenty4","v0lga","vareya","weenyqueen","weirdartist","whizchick","yoe1974"]
+
 
 def _downloadImagesFromParsedComments(parsedComments: list, thumbnailWidth: int) -> list:
     """
@@ -320,6 +234,20 @@ def _parseComments(comments: list) -> list:
         parsedComment = _parseCommentBody(comment)
         parsedComment['isDefaultImage'] = False
         if not parsedComment['postUrl']:
+            continue
+
+        parsedComment['postUrl'] = parsedComment['postUrl'].replace('https://hive.blog', 'https://peakd.com')
+        parsedComment['postUrl'] = parsedComment['postUrl'].replace('https://ecency.com', 'https://peakd.com')
+
+        hivePermlink = parsedComment['postUrl'].replace('https://peakd.com/hive-174695/', '')
+
+        try:
+            hiveComment = Comment(hivePermlink)
+            if 'lmac' not in str(hiveComment.get_votes()):
+                print('Post {post} not voted by LMAC.'.format(post=hivePermlink))
+                continue
+        except:
+            print('Failed to load {post}'.format(post=hivePermlink))
             continue
 
         if not parsedComment['imageUrl']:
